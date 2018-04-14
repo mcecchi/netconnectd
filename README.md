@@ -1,3 +1,11 @@
+---
+
+Provided as-is, currently not actively maintained.
+
+[OctoPrint](http://octoprint.org) is eating up too much of my time and I don't find myself at liberty to actively maintain this project for the foreseeable future. If it works for you, great. If it doesn't, sorry, I can't look into it.
+
+---
+
 # netconnectd
 
 netconnectd is a small daemon that ensures connectivity for single-PCB devices such as the Raspberry Pi where you don't 
@@ -136,6 +144,7 @@ It's finally time to install `netconnectd`:
     cd netconnectd
     sudo python setup.py install
     sudo python setup.py install_extras
+    sudo update-rc.d netconnectd defaults 98
 
 Modify `/etc/netconnectd.yaml` as necessary:
  
@@ -169,8 +178,3 @@ You can control the daemon via `netconnectcli`:
   * `netconnectcli select_wifi` manually brings up the wifi configuration
 
 You can always get help with `netconnectcli --help` or `netconnectcli <command> --help` for specific commands.
-
-If everything looks alright, configure the service so that it starts at boot up:
-
-    sudo update-rc.d netconnectd defaults 98
-
