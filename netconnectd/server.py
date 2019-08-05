@@ -33,7 +33,7 @@ class Server(object):
 
     def __init__(self, server_address=None, wifi_if=None, wired_if=None, linkmon_enabled=True, linkmon_maxdown=3, linkmon_interval=10,
                  ap_driver="nl80211", ap_ssid=None, ap_psk=None, ap_name='netconnectd_ap', ap_channel=3, ap_ip='10.250.250.1',
-                 ap_network='10.250.250.0/24', ap_range=('10.250.250.100', '10.250.250.200'), ap_forwarding=False,
+                 ap_network='10.250.250.0/24', ap_range=('10.250.250.100', '10.250.250.200'), ap_forwarding=False, ap_wireless_power_off=False,
                  ap_domain=None, wifi_name='netconnect_wifi', wifi_free=False, wifi_kill=False, path_hostapd="/usr/sbin/hostapd",
                  path_hostapd_conf="/etc/hostapd/conf.d", path_dnsmasq="/usr/sbin/dnsmasq", path_dnsmasq_conf="/etc/dnsmasq.conf.d",
                  path_interfaces="/etc/network/interfaces"):
@@ -95,7 +95,8 @@ class Server(object):
                                                            ap_ssid, ap_channel, ap_ip, ap_network,
                                                            ap_range[0], ap_range[1], forwarding_to=wired_if if ap_forwarding else None,
                                                            hostap_options=dict(psk=ap_psk, driver=ap_driver),
-                                                           dnsmasq_options=dict(domain=ap_domain))
+                                                           dnsmasq_options=dict(domain=ap_domain),
+                                                           scheme_options=dict(wireless-power='off') if ap_wireless_power_off else None)
         self.access_point.save(allow_overwrite=True)
         if self.access_point.is_running():
             self.logger.debug("Access point was running while starting up, disabling it")
@@ -625,6 +626,7 @@ def start_server(config):
         ap_network=config["ap"]["network"],
         ap_range=config["ap"]["range"],
         ap_forwarding=config["ap"]["forwarding_to_wired"],
+        ap_wireless_power_off=config["ap"]["wireless_power_off"],
         ap_domain=config["ap"]["domain"],
         wifi_name=config["wifi"]["name"],
         wifi_free=config["wifi"]["free"],
@@ -690,6 +692,7 @@ def server():
     parser.add_argument("--ap-range", type=dhcp_range, help="Range of IPs to handout via DHPC on AP, comma-separated, defaults to '10.250.250.100,10.250.250.200'")
     parser.add_argument("--ap-domain", help="Domain to create on AP, disabled by default")
     parser.add_argument("--ap-forwarding", action="store_true", help="Enable forwarding from AP to wired connection, disabled by default")
+    parser.add_argument("--ap-wireless-power-off", action="store_true", help="Disable power management, enabled by default")
     parser.add_argument("--wifi-name", help="Internal name to assign to Wifi config, defaults to 'netconnectd_wifi', you mostly won't have to set this")
     parser.add_argument("--wifi-free", action="store_true", help="Whether the wifi has to be freed from network manager before every configuration attempt, defaults to false")
     parser.add_argument("--wifi-kill", action="store_true", help="Whether the wifi interface has to be killed before every configuration attmept, defaults to false")
@@ -790,6 +793,8 @@ def server():
         config["ap"]["domain"] = args.ap_domain
     if args.ap_forwarding:
         config["ap"]["forward_to_wired"] = True
+    if args.ap_wireless_power_off:
+        config["ap"]["wireless_power_off"] = True
 
     if args.wifi_name:
         config["wifi"]["name"] = args.wifi_name
