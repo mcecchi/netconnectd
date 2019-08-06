@@ -58,6 +58,9 @@ ap:
   # to false
   #forwarding_to_wired: false 
 
+  # whether to disable power management, defaults to false
+  #wireless_power_off: false 
+
 # wifi configuration
 wifi:
   # nick name under which the wifi connection will be saved, usually 

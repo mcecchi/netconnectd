@@ -692,7 +692,7 @@ def server():
     parser.add_argument("--ap-range", type=dhcp_range, help="Range of IPs to handout via DHPC on AP, comma-separated, defaults to '10.250.250.100,10.250.250.200'")
     parser.add_argument("--ap-domain", help="Domain to create on AP, disabled by default")
     parser.add_argument("--ap-forwarding", action="store_true", help="Enable forwarding from AP to wired connection, disabled by default")
-    parser.add_argument("--ap-wireless-power-off", action="store_true", help="Disable power management, enabled by default")
+    parser.add_argument("--ap-wireless-power-off", action="store_true", help="Disable power management, disabled by default")
     parser.add_argument("--wifi-name", help="Internal name to assign to Wifi config, defaults to 'netconnectd_wifi', you mostly won't have to set this")
     parser.add_argument("--wifi-free", action="store_true", help="Whether the wifi has to be freed from network manager before every configuration attempt, defaults to false")
     parser.add_argument("--wifi-kill", action="store_true", help="Whether the wifi interface has to be killed before every configuration attmept, defaults to false")
@@ -792,7 +792,7 @@ def server():
     if args.ap_domain:
         config["ap"]["domain"] = args.ap_domain
     if args.ap_forwarding:
-        config["ap"]["forward_to_wired"] = True
+        config["ap"]["forwarding_to_wired"] = True
     if args.ap_wireless_power_off:
         config["ap"]["wireless_power_off"] = True
 
