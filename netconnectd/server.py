@@ -96,7 +96,7 @@ class Server(object):
                                                            ap_range[0], ap_range[1], forwarding_to=wired_if if ap_forwarding else None,
                                                            hostap_options=dict(psk=ap_psk, driver=ap_driver),
                                                            dnsmasq_options=dict(domain=ap_domain),
-                                                           scheme_options=dict(wireless-power='off') if ap_wireless_power_off else None)
+                                                           scheme_options=dict({'wireless-power':'off'}) if ap_wireless_power_off else None)
         self.access_point.save(allow_overwrite=True)
         if self.access_point.is_running():
             self.logger.debug("Access point was running while starting up, disabling it")
