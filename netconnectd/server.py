@@ -11,7 +11,8 @@ import time
 import threading
 #from .wifi_ap import Hostapd, Dnsmasq, AccessPoint
 #from . import wifi_ap
-import wifi
+#import wifi
+from .wifi.scan import Cell
 # import wifi.scheme
 # import wifi.utils
 
