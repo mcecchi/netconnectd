@@ -5,10 +5,10 @@ import os
 import logging
 import re
 
-from wifi import Scheme
-import wifi.subprocess_compat as subprocess
+from .wifi import Scheme
+import .wifi.subprocess_compat as subprocess
 
-from wifi_ap.exceptions import ApError, ApBindError, ApInterfaceError, ApSchemeError
+from .wifi_ap.exceptions import ApError, ApBindError, ApInterfaceError, ApSchemeError
 
 
 
