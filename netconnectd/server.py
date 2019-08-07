@@ -9,14 +9,17 @@ import subprocess
 import sys
 import time
 import threading
-from .wifi_ap import Hostapd, Dnsmasq
+import wifi
+import wifi.scheme
+import wifi.utils
+
 
 from .util import has_link, common_arguments, default_config, parse_configfile, InvalidConfig
 from .protocol import (Message, StartApMessage, StopApMessage, ListWifiMessage, ConfigureWifiMessage, SelectWifiMessage,
                        ForgetWifiMessage, ResetMessage, StatusMessage, SuccessResponse, ErrorResponse)
 
 
-iwconfig_re = re.compile('ESSID:"(?P<ssid>[^"]+)".*Access Point: (?P<address>%s).*' % wifi_ap.wifi.utils.mac_addr_pattern , re.DOTALL)
+iwconfig_re = re.compile('ESSID:"(?P<ssid>[^"]+)".*Access Point: (?P<address>%s).*' % wifi.utils.mac_addr_pattern , re.DOTALL)
 
 
 class Server(object):
