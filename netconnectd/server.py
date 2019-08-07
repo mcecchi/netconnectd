@@ -9,12 +9,7 @@ import subprocess
 import sys
 import time
 import threading
-from .wifiap import Hostapd, Dnsmasq, AccessPoint
-#from . import wifiap
-#import wifi
-#from .wifi.scan import Cell
-# import wifi.scheme
-# import wifi.utils
+from .wifiap import Hostapd, Dnsmasq, AccessPoint, mac_addr_pattern
 
 
 from .util import has_link, common_arguments, default_config, parse_configfile, InvalidConfig
