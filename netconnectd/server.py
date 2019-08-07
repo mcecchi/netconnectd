@@ -10,7 +10,7 @@ import sys
 import time
 import threading
 #from .wifi_ap import Hostapd, Dnsmasq, AccessPoint
-from .wifi_ap import *
+from wifi_ap import *
 # import wifi
 # import wifi.scheme
 # import wifi.utils
