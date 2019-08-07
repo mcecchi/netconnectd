@@ -77,7 +77,7 @@ class Scheme(object):
             'interfaces': interfaces,
         })
 
-    def __init__(self, interface, name, options=None):
+    def __init__(self, interface, name, type="dhcp", options=None):
         self.interface = interface
         self.name = name
         self.options = options or {}
