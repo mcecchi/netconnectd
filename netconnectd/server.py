@@ -9,7 +9,7 @@ import subprocess
 import sys
 import time
 import threading
-from wifi_ap import Hostapd, Dnsmasq
+from .wifi_ap import Hostapd, Dnsmasq
 
 from .util import has_link, common_arguments, default_config, parse_configfile, InvalidConfig
 from .protocol import (Message, StartApMessage, StopApMessage, ListWifiMessage, ConfigureWifiMessage, SelectWifiMessage,
