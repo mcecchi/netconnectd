@@ -9,9 +9,9 @@ import subprocess
 import sys
 import time
 import threading
-import wifi
-import wifi.scheme
-import wifi.utils
+import .wifi
+import .wifi.scheme
+import .wifi.utils
 
 
 from .util import has_link, common_arguments, default_config, parse_configfile, InvalidConfig
