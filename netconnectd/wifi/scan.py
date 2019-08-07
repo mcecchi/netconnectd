@@ -4,8 +4,8 @@ import re
 import textwrap
 
 import subprocess_compat as subprocess
-from .utils import db2dbm
-from .exceptions import InterfaceError
+from utils import db2dbm
+from exceptions import InterfaceError
 
 
 class Cell(object):
@@ -14,17 +14,7 @@ class Cell(object):
     """
 
     def __init__(self):
-        self.ssid = None
         self.bitrates = []
-        self.address = None
-        self.channel = None
-        self.encrypted = False
-        self.encryption_type = None
-        self.frequency = None
-        self.mode = None
-        self.quality = None
-        self.signal = None
-        self.noise = None
 
     def __repr__(self):
         return 'Cell(ssid={ssid})'.format(**vars(self))
@@ -63,9 +53,9 @@ class Cell(object):
 
 
 cells_re = re.compile(r'Cell \d+ - ')
-quality_re_dict = {'dBm': re.compile(r'Quality[=:](?P<quality>\d+/\d+).*Signal level[=:](?P<siglevel>-\d+) dBm?(.*Noise level[=:](?P<noiselevel>-\d+) dBm)?'),
-                   'relative': re.compile(r'Quality[=:](?P<quality>\d+/\d+).*Signal level[=:](?P<siglevel>\d+/\d+)'),
-                   'absolute': re.compile(r'Quality[=:](?P<quality>\d+).*Signal level[=:](?P<siglevel>\d+)')}
+quality_re_dict = {'dBm': re.compile(r'Quality=(\d+/\d+).*Signal level=(-\d+) dBm'),
+                   'relative': re.compile(r'Quality=(\d+/\d+).*Signal level=(\d+/\d+)'),
+                   'absolute': re.compile(r'Quality:(\d+).*Signal level:(\d+)')}
 frequency_re = re.compile(r'^(?P<frequency>[\d\.]+ .Hz)(?:[\s\(]+Channel\s+(?P<channel>\d+)[\s\)]+)?$')
 
 
@@ -112,10 +102,7 @@ def normalize(cell_block):
             for re_name, quality_re in quality_re_dict.items():
                 match_result = quality_re.search(line)
                 if match_result is not None:
-                    groups = match_result.groupdict()
-                    cell.quality = groups['quality']
-                    signal = groups['siglevel']
-                    noise = groups.get('noiselevel')
+                    cell.quality, signal = match_result.groups()
                     if re_name == 'relative':
                         actual, total = map(int, signal.split('/'))
                         cell.signal = db2dbm(int((actual / total) * 100))
@@ -124,8 +111,6 @@ def normalize(cell_block):
                         cell.signal = db2dbm(int(signal))
                     else:
                         cell.signal = int(signal)
-                    if noise is not None:
-                        cell.noise = int(noise)
                     break
 
         elif line.startswith('Bit Rates'):
@@ -165,7 +150,7 @@ def normalize(cell_block):
 
     # It seems that encryption types other than WEP need to specify their
     # existence.
-    if cell.encrypted and not cell.encryption_type:
+    if cell.encrypted and not hasattr(cell, 'encryption_type'):
         cell.encryption_type = 'wep'
 
     return cell

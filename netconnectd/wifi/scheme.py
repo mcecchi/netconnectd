@@ -1,10 +1,11 @@
 import re
 import itertools
+import logging
 
 import subprocess_compat as subprocess
 from pbkdf2 import PBKDF2
 from utils import ensure_file_exists
-from exceptions import ConnectionError
+from exceptions import *
 
 
 def configuration(cell, passkey=None):
@@ -80,15 +81,23 @@ class Scheme(object):
     def __init__(self, interface, name, type="dhcp", options=None):
         self.interface = interface
         self.name = name
+        self.type = type
+
+        if options:
+            for k, v in options.items():
+                if not isinstance(v, (list, tuple)):
+                    options[k] = [v]
         self.options = options or {}
+
+        self.logger = logging.getLogger(__name__)
 
     def __str__(self):
         """
         Returns the representation of a scheme that you would need
         in the /etc/network/interfaces file.
         """
-        iface = "iface {interface}-{name} inet dhcp".format(**vars(self))
-        options = ''.join("\n    {k} {v}".format(k=k, v=v) for k, v in self.options.items())
+        iface = "iface {interface}-{name} inet {type}".format(**vars(self))
+        options = ''.join("\n    {k} {v}".format(k=k, v=v) for k in self.options.keys() for v in self.options[k])
         return iface + options + '\n'
 
     def __repr__(self):
@@ -124,13 +133,17 @@ class Scheme(object):
         Intuits the configuration needed for a specific
         :class:`Cell` and creates a :class:`Scheme` for it.
         """
-        return cls(interface, name, configuration(cell, passkey))
+        return cls(interface, name, options=configuration(cell, passkey))
 
-    def save(self):
+    def save(self, allow_overwrite=False):
         """
         Writes the configuration to the :attr:`interfaces` file.
         """
-        assert not self.find(self.interface, self.name), "This scheme already exists"
+        existing_scheme = self.find(self.interface, self.name)
+        if existing_scheme:
+            if not allow_overwrite:
+                raise RuntimeError("Scheme for interface %s named %s already exists and overwrite is forbidden" % (self.interface, self.name))
+            existing_scheme.delete()
 
         with open(self.interfaces, 'a') as f:
             f.write('\n')
@@ -140,14 +153,14 @@ class Scheme(object):
         """
         Deletes the configuration from the :attr:`interfaces` file.
         """
-        iface = "iface %s-%s inet dhcp" % (self.interface, self.name)
+        iface = "iface %s-%s inet %s" % (self.interface, self.name, self.type)
         content = ''
         with open(self.interfaces, 'r') as f:
             skip = False
             for line in f:
                 if not line.strip():
                     skip = False
-                elif line.strip() == iface:
+                elif line.strip().startswith(iface):
                     skip = True
                 if not skip:
                     content += line
@@ -160,7 +173,7 @@ class Scheme(object):
 
     def as_args(self):
         args = list(itertools.chain.from_iterable(
-            ('-o', '{k}={v}'.format(k=k, v=v)) for k, v in self.options.items()))
+            ('-o', '{k}={v}'.format(k=k, v=v)) for k in self.options.keys() for v in self.options[k]))
 
         return [self.interface + '=' + self.iface] + args
 
@@ -169,18 +182,33 @@ class Scheme(object):
         Connects to the network as configured in this scheme.
         """
 
-        subprocess.check_output(['/sbin/ifdown', self.interface], stderr=subprocess.STDOUT)
-        ifup_output = subprocess.check_output(['/sbin/ifup'] + self.as_args(), stderr=subprocess.STDOUT)
+        self.deactivate()
+        try:
+            ifup_output = subprocess.check_output(['/sbin/ifup'] + self.as_args(), stderr=subprocess.STDOUT)
+        except subprocess.CalledProcessError as e:
+            self.logger.exception("Error while trying to connect to %s" % self.iface)
+            self.logger.error("Output: %s" % e.output)
+            raise InterfaceError("Failed to connect to %r: %s" % (self, e.message))
         ifup_output = ifup_output.decode('utf-8')
 
         return self.parse_ifup_output(ifup_output)
 
+    def deactivate(self):
+        """
+        Disconnects from the network as configured in this scheme.
+        """
+
+        subprocess.check_output(['/sbin/ifdown', self.interface], stderr=subprocess.STDOUT)
+
     def parse_ifup_output(self, output):
-        matches = bound_ip_re.search(output)
-        if matches:
-            return Connection(scheme=self, ip_address=matches.group('ip_address'))
+        if self.type == "dhcp":
+            matches = bound_ip_re.search(output)
+            if matches:
+                return Connection(scheme=self, ip_address=matches.group('ip_address'))
+            else:
+                raise ConnectionError("Failed to connect to %r" % self)
         else:
-            raise ConnectionError("Failed to connect to %r" % self)
+            return Connection(scheme=self, ip_address=self.options["address"][0])
 
 
 class Connection(object):
@@ -192,7 +220,8 @@ class Connection(object):
         self.ip_address = ip_address
 
 
-scheme_re = re.compile(r'iface\s+(?P<interface>[^-]+)(?:-(?P<name>\S+))?')
+# TODO: support other interfaces
+scheme_re = re.compile(r'iface\s+(?P<interface>wlan\d?)(?:-(?P<name>\w+))?\s+inet\s+(?P<type>\w+)')
 
 
 def extract_schemes(interfaces, scheme_class=Scheme):
@@ -206,15 +235,18 @@ def extract_schemes(interfaces, scheme_class=Scheme):
         match = scheme_re.match(line)
         if match:
             options = {}
-            interface, scheme = match.groups()
+            interface, scheme, type = match.groups()
 
             if not scheme or not interface:
                 continue
 
             while lines and lines[0].startswith(' '):
                 key, value = re.sub(r'\s{2,}', ' ', lines.pop(0).strip()).split(' ', 1)
-                options[key] = value
+                if not key in options:
+                    options[key] = []
+                options[key].append(value)
 
-            scheme = scheme_class(interface, scheme, options)
+            scheme = scheme_class(interface, scheme, type=type, options=options)
 
             yield scheme
+
