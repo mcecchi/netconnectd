@@ -1,2 +1,2 @@
-from wifi.scan import Cell
-from wifi.scheme import Scheme
+from .wifi.scan import Cell
+from .wifi.scheme import Scheme
