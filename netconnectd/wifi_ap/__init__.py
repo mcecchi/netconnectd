@@ -9,7 +9,7 @@ from .wifi import Scheme
 from .wifi import subprocess_compat as subprocess
 #import wifi.subprocess_compat as subprocess
 
-from .wifi_ap.exceptions import ApError, ApBindError, ApInterfaceError, ApSchemeError
+from .exceptions import ApError, ApBindError, ApInterfaceError, ApSchemeError
 
 
 
