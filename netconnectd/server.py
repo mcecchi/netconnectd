@@ -45,7 +45,7 @@ class Server(object):
         self.Hostapd = Hostapd.for_hostapd_and_confd(path_hostapd, path_hostapd_conf)
         self.Dnsmasq = Dnsmasq.for_dnsmasq_and_confd(path_dnsmasq, path_dnsmasq_conf)
         self.Scheme = Scheme.for_file(path_interfaces)
-        self.AccessPoint = wifi.AccessPoint.for_classes(
+        self.AccessPoint = AccessPoint.for_classes(
             hostapd_cls=self.Hostapd,
             dnsmasq_cls=self.Dnsmasq,
             scheme_cls=self.Scheme
