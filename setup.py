@@ -34,6 +34,7 @@ EXTRAS_FILES = [
     ('/etc/default/', [('extras/netconnectd.default', 'netconnectd', 0644)]),
     ('/etc/', [('extras/netconnectd.yaml', 'netconnectd.yaml', 0600)]),
     ('/etc/logrotate.d/', [('extras/netconnectd.logrotate', 'logrotate', 0644)]),
+    ('/etc/bash_completion.d/', [('extras/wifi-completion.bash', 'wifi-completion', 0644)])
 ]
 
 
@@ -173,22 +174,20 @@ def params():
     version = versioneer.get_version()
     description = DESCRIPTION
     long_description = LONG_DESCRIPTION
-    author = "Gina Haeussge"
-    author_email = "osd@foosel.net"
-    url = "http://github.com/foosel/netconnectd"
+    author = "Mauro Cecchi"
+    author_email = "mauro30061960@gmail.com"
+    url = "http://github.com/cecchim/netconnectd"
     license = "AGPLV3"
     cmdclass = get_cmdclass()
 
     packages = ["netconnectd"]
     zip_safe = False
 
-    dependency_links = [
-        "https://github.com/foosel/wifi/tarball/master#egg=wifi-1.0.1"
-    ]
     install_requires = [
-        "wifi==1.0.1",
-        "PyYaml",
-        "netaddr"
+        "setuptools",
+        'pbkdf2',
+        "netaddr",
+        "PyYaml"
     ]
 
     entry_points = {
