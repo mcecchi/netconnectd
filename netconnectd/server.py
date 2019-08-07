@@ -16,7 +16,7 @@ from .protocol import (Message, StartApMessage, StopApMessage, ListWifiMessage, 
                        ForgetWifiMessage, ResetMessage, StatusMessage, SuccessResponse, ErrorResponse)
 
 
-iwconfig_re = re.compile('ESSID:"(?P<ssid>[^"]+)".*Access Point: (?P<address>%s).*' % wifi.utils.mac_addr_pattern , re.DOTALL)
+iwconfig_re = re.compile('ESSID:"(?P<ssid>[^"]+)".*Access Point: (?P<address>%s).*' % .wifi.utils.mac_addr_pattern , re.DOTALL)
 
 
 class Server(object):
