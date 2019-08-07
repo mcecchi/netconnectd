@@ -10,6 +10,7 @@ import sys
 import time
 import threading
 from .wifiap import Hostapd, Dnsmasq, AccessPoint, mac_addr_pattern
+from .wifiap import Scheme
 
 
 from .util import has_link, common_arguments, default_config, parse_configfile, InvalidConfig
@@ -41,9 +42,9 @@ class Server(object):
             self.logger.error("Uncaught exception", exc_info=(exc_type, exc_value, exc_tb))
         sys.excepthook = exception_logger
 
-        self.Hostapd = wifi.Hostapd.for_hostapd_and_confd(path_hostapd, path_hostapd_conf)
-        self.Dnsmasq = wifi.Dnsmasq.for_dnsmasq_and_confd(path_dnsmasq, path_dnsmasq_conf)
-        self.Scheme = wifi.Scheme.for_file(path_interfaces)
+        self.Hostapd = Hostapd.for_hostapd_and_confd(path_hostapd, path_hostapd_conf)
+        self.Dnsmasq = Dnsmasq.for_dnsmasq_and_confd(path_dnsmasq, path_dnsmasq_conf)
+        self.Scheme = Scheme.for_file(path_interfaces)
         self.AccessPoint = wifi.AccessPoint.for_classes(
             hostapd_cls=self.Hostapd,
             dnsmasq_cls=self.Dnsmasq,
