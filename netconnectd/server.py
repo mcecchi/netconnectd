@@ -9,8 +9,7 @@ import subprocess
 import sys
 import time
 import threading
-#from .wifi_ap import Hostapd, Dnsmasq, AccessPoint
-import wifi_ap
+from wifi_ap import Hostapd, Dnsmasq, AccessPoint
 # import wifi
 # import wifi.scheme
 # import wifi.utils
