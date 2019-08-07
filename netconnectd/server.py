@@ -12,6 +12,9 @@ import threading
 from .wifi import scheme
 from .wifi import utils
 from .wifi.utils import mac_addr_pattern
+from .wifi.scan import Cell
+from .wifi.scheme import Scheme
+from .wifi.ap import AccessPoint, Hostapd, Dnsmasq
 
 
 from .util import has_link, common_arguments, default_config, parse_configfile, InvalidConfig
@@ -43,10 +46,10 @@ class Server(object):
             self.logger.error("Uncaught exception", exc_info=(exc_type, exc_value, exc_tb))
         sys.excepthook = exception_logger
 
-        self.Hostapd = wifi.Hostapd.for_hostapd_and_confd(path_hostapd, path_hostapd_conf)
-        self.Dnsmasq = wifi.Dnsmasq.for_dnsmasq_and_confd(path_dnsmasq, path_dnsmasq_conf)
-        self.Scheme = wifi.Scheme.for_file(path_interfaces)
-        self.AccessPoint = wifi.AccessPoint.for_classes(
+        self.Hostapd = Hostapd.for_hostapd_and_confd(path_hostapd, path_hostapd_conf)
+        self.Dnsmasq = Dnsmasq.for_dnsmasq_and_confd(path_dnsmasq, path_dnsmasq_conf)
+        self.Scheme = Scheme.for_file(path_interfaces)
+        self.AccessPoint = AccessPoint.for_classes(
             hostapd_cls=self.Hostapd,
             dnsmasq_cls=self.Dnsmasq,
             scheme_cls=self.Scheme
@@ -341,7 +344,7 @@ class Server(object):
         subprocess.check_call(['ifconfig', self.wifi_if, 'up'])
 
         self.logger.debug("Scanning for cells")
-        self.cells = wifi.Cell.all(self.wifi_if)
+        self.cells = Cell.all(self.wifi_if)
 
         self.logger.debug("Converting result of scan")
         return self.__class__.convert_cells(self.cells)
