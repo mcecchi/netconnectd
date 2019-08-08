@@ -13,9 +13,6 @@ from .wifi import *
 from .wifi import scheme
 from .wifi import utils
 from .wifi.utils import mac_addr_pattern
-# from .wifi.scan import Cell
-# from .wifi.scheme import Scheme
-# from .wifi.ap import AccessPoint, Hostapd, Dnsmasq
 
 
 from .util import has_link, common_arguments, default_config, parse_configfile, InvalidConfig
