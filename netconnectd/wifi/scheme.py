@@ -1,11 +1,14 @@
+from __future__ import absolute_import
+
 import re
 import itertools
 import logging
 
-import subprocess_compat as subprocess
+from . import subprocess_compat as subprocess
+#import subprocess_compat as subprocess
 from pbkdf2 import PBKDF2
-from utils import ensure_file_exists
-from exceptions import *
+from .utils import ensure_file_exists
+from .exceptions import *
 
 
 def configuration(cell, passkey=None):

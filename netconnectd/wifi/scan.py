@@ -1,11 +1,11 @@
-from __future__ import division
+from __future__ import division, absolute_import
 
 import re
 import textwrap
 
-import subprocess_compat as subprocess
-from utils import db2dbm
-from exceptions import InterfaceError
+from . import subprocess_compat as subprocess
+from .utils import db2dbm
+from .exceptions import InterfaceError
 
 
 class Cell(object):
