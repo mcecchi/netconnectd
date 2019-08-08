@@ -10,8 +10,8 @@ import sys
 import time
 import threading
 from .wifi import *
-# from .wifi import scheme
-# from .wifi import utils
+from .wifi import scheme
+from .wifi import utils
 from .wifi.utils import mac_addr_pattern
 # from .wifi.scan import Cell
 # from .wifi.scheme import Scheme
