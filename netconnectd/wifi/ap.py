@@ -5,10 +5,10 @@ import os
 import logging
 import re
 
-from . import Scheme
-from .exceptions import BindError
-from .utils import mac_addr_pattern
-from . import subprocess_compat as subprocess
+from netconnectd.wifi import Scheme
+from netconnectd.wifi.exceptions import BindError
+from netconnectd.wifi.utils import mac_addr_pattern
+from netconnectd.wifi import subprocess_compat as subprocess
 
 
 bound_ap_re = re.compile(r"^Using interface (?P<interface>\w+) with hwaddr %s and ssid '(?P<ssid>[^']+)'" % mac_addr_pattern, flags=re.MULTILINE)

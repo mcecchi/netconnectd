@@ -1,5 +1,5 @@
 from __future__ import absolute_import
 
-from .scan import Cell
-from .scheme import Scheme
-from .ap import AccessPoint, Hostapd, Dnsmasq
+from netconnectd.wifi.scan import Cell
+from netconnectd.wifi.scheme import Scheme
+from netconnectd.wifi.ap import AccessPoint, Hostapd, Dnsmasq

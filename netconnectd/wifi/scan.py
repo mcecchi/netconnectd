@@ -3,9 +3,9 @@ from __future__ import division, absolute_import
 import re
 import textwrap
 
-from . import subprocess_compat as subprocess
-from .utils import db2dbm
-from .exceptions import InterfaceError
+from netconnectd.wifi import subprocess_compat as subprocess
+from netconnectd.wifi.utils import db2dbm
+from netconnectd.wifi.exceptions import InterfaceError
 
 
 class Cell(object):

@@ -127,7 +127,7 @@ def client():
     args = parser.parse_args()
 
     if args.command == "version":
-        from ._version import get_versions
+        from netconnectd._version import get_versions
         import sys
         print("Version: %s" % get_versions()["version"])
         sys.exit(0)

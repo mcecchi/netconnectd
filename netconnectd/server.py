@@ -9,14 +9,14 @@ import subprocess
 import sys
 import time
 import threading
-from .wifi import *
-from .wifi import scheme
-from .wifi import utils
-from .wifi.utils import mac_addr_pattern
+from netconnectd.wifi import *
+from netconnectd.wifi import scheme
+from netconnectd.wifi import utils
+from netconnectd.wifi.utils import mac_addr_pattern
 
 
-from .util import has_link, common_arguments, default_config, parse_configfile, InvalidConfig
-from .protocol import (Message, StartApMessage, StopApMessage, ListWifiMessage, ConfigureWifiMessage, SelectWifiMessage,
+from netconnectd.util import has_link, common_arguments, default_config, parse_configfile, InvalidConfig
+from netconnectd.protocol import (Message, StartApMessage, StopApMessage, ListWifiMessage, ConfigureWifiMessage, SelectWifiMessage,
                        ForgetWifiMessage, ResetMessage, StatusMessage, SuccessResponse, ErrorResponse)
 
 
@@ -707,7 +707,7 @@ def server():
     args = parser.parse_args()
 
     if args.version:
-        from ._version import get_versions
+        from netconnectd._version import get_versions
         import sys
         print("Version: %s" % get_versions()["version"])
         sys.exit(0)
@@ -715,7 +715,7 @@ def server():
     if args.daemon:
         import os
         import sys
-        from .daemon import Daemon
+        from netconnectd.daemon import Daemon
 
         if args.daemon == "stop":
             # stop the daemon
@@ -829,7 +829,7 @@ def server():
 
     else:
         # start as daemon
-        from .daemon import Daemon
+        from netconnectd.daemon import Daemon
 
         class ServerDaemon(Daemon):
             def run(self):

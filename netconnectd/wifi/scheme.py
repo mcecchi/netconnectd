@@ -4,11 +4,11 @@ import re
 import itertools
 import logging
 
-from . import subprocess_compat as subprocess
+from netconnectd.wifi import subprocess_compat as subprocess
 #import subprocess_compat as subprocess
 from pbkdf2 import PBKDF2
-from .utils import ensure_file_exists
-from .exceptions import *
+from netconnectd.wifi.utils import ensure_file_exists
+from netconnectd.wifi.exceptions import *
 
 
 def configuration(cell, passkey=None):
